@@ -30,6 +30,12 @@ func IndexHandler(w http.ResponseWriter, r *http.Request) {
 	fmt.Fprint(w, data)
 }
 
+// HelloHandler hello接口
+func HelloHandler(w http.ResponseWriter, r *http.Request) {
+	data := "Hello!"
+	fmt.Fprint(w, data)
+}
+
 // CounterHandler 计数器接口
 func CounterHandler(w http.ResponseWriter, r *http.Request) {
 	res := &JsonResult{}
