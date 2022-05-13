@@ -2,8 +2,8 @@ package main
 
 import (
 	"fmt"
+	"github.com/gin-gonic/gin"
 	"log"
-	"net/http"
 	"wxcloudrun-golang/db"
 	"wxcloudrun-golang/service"
 )
@@ -13,9 +13,18 @@ func main() {
 		panic(fmt.Sprintf("mysql init failed with %+v", err))
 	}
 
-	http.HandleFunc("/", service.IndexHandler)
-	http.HandleFunc("/hello", service.HelloHandler)
-	http.HandleFunc("/api/count", service.CounterHandler)
+	engine := gin.Default()
 
-	log.Fatal(http.ListenAndServe(":8080", nil))
+	engine.GET("/", service.IndexHandler)
+	engine.GET("/api/count", service.CounterHandler)
+	engine.POST("/api/count", service.CounterHandler)
+	engine.GET("/auth", service.AuthorizeHandler)
+	engine.GET("/code", service.GetCode)
+	engine.GET("/token/:appId", service.GetToken)
+
+	err := engine.Run("8080")
+	if err != nil {
+		log.Fatal(err.Error())
+	}
+
 }

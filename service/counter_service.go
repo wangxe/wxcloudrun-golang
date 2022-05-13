@@ -3,6 +3,7 @@ package service
 import (
 	"encoding/json"
 	"fmt"
+	"github.com/gin-gonic/gin"
 	"io/ioutil"
 	"net/http"
 	"time"
@@ -21,26 +22,20 @@ type JsonResult struct {
 }
 
 // IndexHandler 计数器接口
-func IndexHandler(w http.ResponseWriter, r *http.Request) {
+func IndexHandler(c *gin.Context) {
 	data, err := getIndex()
 	if err != nil {
-		fmt.Fprint(w, "内部错误")
+		c.Data(http.StatusInternalServerError, "text/plain", []byte("内部错误"))
 		return
 	}
-	fmt.Fprint(w, data)
-}
-
-// HelloHandler hello接口
-func HelloHandler(w http.ResponseWriter, r *http.Request) {
-	data := "Hello!"
-	fmt.Fprint(w, data)
+	c.Data(http.StatusOK, "text/html", []byte(data))
 }
 
 // CounterHandler 计数器接口
-func CounterHandler(w http.ResponseWriter, r *http.Request) {
+func CounterHandler(c *gin.Context) {
 	res := &JsonResult{}
 
-	if r.Method == http.MethodGet {
+	if c.Request.Method == http.MethodGet {
 		counter, err := getCurrentCounter()
 		if err != nil {
 			res.Code = -1
@@ -48,8 +43,8 @@ func CounterHandler(w http.ResponseWriter, r *http.Request) {
 		} else {
 			res.Data = counter.Count
 		}
-	} else if r.Method == http.MethodPost {
-		count, err := modifyCounter(r)
+	} else if c.Request.Method == http.MethodPost {
+		count, err := modifyCounter(c.Request)
 		if err != nil {
 			res.Code = -1
 			res.ErrorMsg = err.Error()
@@ -58,16 +53,15 @@ func CounterHandler(w http.ResponseWriter, r *http.Request) {
 		}
 	} else {
 		res.Code = -1
-		res.ErrorMsg = fmt.Sprintf("请求方法 %s 不支持", r.Method)
+		res.ErrorMsg = fmt.Sprintf("请求方法 %s 不支持", c.Request.Method)
 	}
 
 	msg, err := json.Marshal(res)
 	if err != nil {
-		fmt.Fprint(w, "内部错误")
+		c.Data(http.StatusInternalServerError, "text/plain", []byte("内部错误"))
 		return
 	}
-	w.Header().Set("content-type", "application/json")
-	w.Write(msg)
+	c.Data(http.StatusOK, "application/json", msg)
 }
 
 // modifyCounter 更新计数，自增或者清零
