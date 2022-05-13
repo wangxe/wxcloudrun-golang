@@ -15,12 +15,13 @@ func main() {
 
 	engine := gin.Default()
 
-	engine.GET("/", service.IndexHandler)
-	engine.GET("/api/count", service.CounterHandler)
-	engine.POST("/api/count", service.CounterHandler)
+	//engine.GET("/", service.IndexHandler)
+	//engine.GET("/api/count", service.CounterHandler)
+	//engine.POST("/api/count", service.CounterHandler)
 	engine.GET("/auth", service.AuthorizeHandler)
 	engine.GET("/code", service.GetCode)
-	engine.GET("/token/:appId", service.GetToken)
+	engine.GET("/token/:appId", service.SaveToken)
+	engine.GET("/getToken", service.GetToken)
 
 	err := engine.Run(":8080")
 	if err != nil {

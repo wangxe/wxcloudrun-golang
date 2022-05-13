@@ -14,6 +14,8 @@ const (
 	clientSecret = "80b3f02de8c5b1fda2deaeb4a5a790e4a9550eee"
 )
 
+var token map[string]interface{}
+
 // HelloHandler hello接口
 func AuthorizeHandler(c *gin.Context) {
 
@@ -59,7 +61,7 @@ func GetCode(c *gin.Context) {
 
 }
 
-func GetToken(c *gin.Context) {
+func SaveToken(c *gin.Context) {
 
 	all, err := ioutil.ReadAll(c.Request.Body)
 	if err != nil {
@@ -67,5 +69,19 @@ func GetToken(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusOK, all)
+	token = make(map[string]interface{})
+	token["data"] = all
+
+	c.JSON(http.StatusOK, "ok")
+}
+
+func GetToken(c *gin.Context) {
+
+	if token != nil {
+		c.JSON(http.StatusOK, token)
+		return
+	}
+
+	c.JSON(http.StatusOK, "token not exist")
+
 }
