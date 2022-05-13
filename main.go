@@ -22,7 +22,7 @@ func main() {
 	engine.GET("/code", service.GetCode)
 	engine.GET("/token/:appId", service.GetToken)
 
-	err := engine.Run("8080")
+	err := engine.Run(":8080")
 	if err != nil {
 		log.Fatal(err.Error())
 	}
