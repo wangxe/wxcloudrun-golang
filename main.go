@@ -20,7 +20,6 @@ func main() {
 	engine.POST("/api/count", service.CounterHandler)
 	engine.GET("/auth", service.AuthorizeHandler)
 	engine.GET("/code", service.GetCode)
-	engine.GET("/token/:appId", service.SaveToken)
 	engine.GET("/getToken", service.GetToken)
 
 	err := engine.Run(":8080")

@@ -25,7 +25,7 @@ func AuthorizeHandler(c *gin.Context) {
 	}
 	params := make(url.Values)
 	params.Add("client_id", clientId)
-	params.Add("client_secret", clientSecret)
+	params.Add("redirect_uri", "https://golang-3k3w-1824429-1311191960.ap-shanghai.run.tcloudbase.com/code/12345")
 	params.Add("login", "login")
 	params.Add("scope", "user%2Crepo%2Cread%3Arepo_hook%2Cwrite%3Arepo_hook%2Cadmin%3Arepo_hook%2Cadmin%3Aorg_hook%2Cread%3Aorg")
 	request.URL.RawQuery = params.Encode()
@@ -51,19 +51,13 @@ func GetCode(c *gin.Context) {
 
 	body := strings.NewReader(string(marshal))
 
-	_, err := http.Post("https://github.com/login/oauth/authorize", "application/json", body)
+	resp, err := http.Post("https://github.com/login/oauth/access_token", "application/json", body)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, err)
 		return
 	}
 
-	c.JSON(http.StatusOK, "ok")
-
-}
-
-func SaveToken(c *gin.Context) {
-
-	all, err := ioutil.ReadAll(c.Request.Body)
+	all, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, err)
 		return
@@ -73,6 +67,7 @@ func SaveToken(c *gin.Context) {
 	token["data"] = all
 
 	c.JSON(http.StatusOK, "ok")
+
 }
 
 func GetToken(c *gin.Context) {
